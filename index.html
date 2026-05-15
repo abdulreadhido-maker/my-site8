@@ -3,53 +3,51 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NOVA STORE PRO</title>
+<title>Super Store</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:#0d0d0f;
+background:#0f0f10;
 color:white;
 }
 
-/* header */
+/* الهيدر */
 header{
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:15px 20px;
-background:rgba(0,0,0,0.8);
-backdrop-filter:blur(10px);
+padding:15px;
+background:#111;
 position:sticky;
 top:0;
-z-index:100;
 }
 
-.logo{font-weight:bold;font-size:20px}
+nav button{
+background:none;
+border:none;
+color:white;
+margin:0 8px;
+cursor:pointer;
+font-size:16px;
+}
 
 input{
 padding:8px;
 border-radius:10px;
 border:none;
-outline:none;
 }
 
-/* hero */
-.hero{
-text-align:center;
-padding:40px;
-}
+/* الصفحات */
+.page{display:none;padding:20px;}
+.active{display:block;}
 
-.hero h1{font-size:50px;margin:0}
-.hero p{color:#aaa}
-
-/* grid */
+/* المنتجات */
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:20px;
-padding:20px;
+gap:15px;
 }
 
 .card{
@@ -57,62 +55,36 @@ background:#1c1c1e;
 padding:15px;
 border-radius:15px;
 text-align:center;
-transition:0.3s;
 }
 
-.card:hover{transform:scale(1.05)}
-
-button{
-padding:8px 10px;
+button.action{
+margin:5px;
+padding:8px;
 border:none;
 border-radius:10px;
 cursor:pointer;
-margin:5px;
 }
 
 .buy{background:white;color:black}
 .fav{background:red;color:white}
-.info{background:#2b7cff;color:white}
 
-/* cart */
-.cart{
+/* السلة */
+.cartBox{
 position:fixed;
-right:15px;
-bottom:15px;
-width:260px;
+right:10px;
+bottom:10px;
 background:#111;
-padding:15px;
+padding:10px;
 border-radius:15px;
+width:220px;
 max-height:300px;
 overflow:auto;
-box-shadow:0 0 20px rgba(0,0,0,0.6);
 }
 
 .item{
 font-size:13px;
-border-bottom:1px solid #333;
 padding:5px;
-}
-
-/* modal (الدفع) */
-.modal{
-display:none;
-position:fixed;
-top:0;left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.7);
-justify-content:center;
-align-items:center;
-}
-
-.box{
-background:white;
-color:black;
-padding:20px;
-border-radius:15px;
-width:300px;
-text-align:center;
+border-bottom:1px solid #333;
 }
 </style>
 </head>
@@ -120,60 +92,65 @@ text-align:center;
 <body>
 
 <header>
-<div class="logo">🛍️ NOVA PRO</div>
-<input id="search" placeholder="ابحث...">
+<div>🛍️ Super Store</div>
+
+<nav>
+<button onclick="show('home')">الرئيسية</button>
+<button onclick="show('shop')">المتجر</button>
+<button onclick="show('cart')">السلة</button>
+</nav>
+
+<input id="search" placeholder="بحث...">
 </header>
 
-<div class="hero">
+<!-- HOME -->
+<div id="home" class="page active">
 <h1>متجر احترافي 🚀</h1>
-<p>تجربة قريبة من Amazon</p>
+<p>أفضل تجربة تسوق داخل ملف واحد</p>
 </div>
 
-<!-- المنتجات -->
+<!-- SHOP -->
+<div id="shop" class="page">
+
+<h2>🛒 المنتجات</h2>
+
 <div class="grid">
 
 <div class="card">
 <h3>iPhone 15</h3>
 <p>4500 ريال</p>
-<button class="buy" onclick="add('iPhone 15')">شراء</button>
-<button class="fav" onclick="fav('iPhone 15')">❤️</button>
-<button class="info" onclick="suggest('iPhone 15')">ذكاء</button>
+<button class="action buy" onclick="add('iPhone 15')">شراء</button>
+<button class="action fav" onclick="fav('iPhone 15')">❤️</button>
 </div>
 
 <div class="card">
 <h3>Samsung S24</h3>
 <p>3200 ريال</p>
-<button class="buy" onclick="add('Samsung S24')">شراء</button>
-<button class="fav" onclick="fav('Samsung S24')">❤️</button>
-<button class="info" onclick="suggest('Samsung S24')">ذكاء</button>
+<button class="action buy" onclick="add('Samsung S24')">شراء</button>
+<button class="action fav" onclick="fav('Samsung S24')">❤️</button>
 </div>
 
 <div class="card">
 <h3>MacBook Pro</h3>
 <p>8000 ريال</p>
-<button class="buy" onclick="add('MacBook Pro')">شراء</button>
-<button class="fav" onclick="fav('MacBook Pro')">❤️</button>
-<button class="info" onclick="suggest('MacBook Pro')">ذكاء</button>
+<button class="action buy" onclick="add('MacBook Pro')">شراء</button>
+<button class="action fav" onclick="fav('MacBook Pro')">❤️</button>
 </div>
 
 </div>
-
-<!-- السلة -->
-<div class="cart">
-<h3>🧺 السلة</h3>
-<div id="cart"></div>
-<button onclick="openPay()" style="width:100%;background:green;color:white;margin-top:10px">الدفع</button>
-<button onclick="clearCart()" style="width:100%;background:red;color:white;margin-top:5px">مسح</button>
 </div>
 
-<!-- الدفع -->
-<div class="modal" id="modal">
-<div class="box">
-<h3>💳 الدفع</h3>
-<p>إجمالي الطلب: <span id="total"></span></p>
-<button onclick="pay()">إتمام الدفع</button>
-<button onclick="closePay()">إغلاق</button>
+<!-- CART -->
+<div id="cart" class="page">
+<h2>🧺 السلة</h2>
+<ul id="list"></ul>
+<button onclick="clearCart()">مسح السلة</button>
 </div>
+
+<!-- CART BOX -->
+<div class="cartBox">
+<h4>السلة السريعة</h4>
+<div id="cartBox"></div>
 </div>
 
 <script>
@@ -181,39 +158,32 @@ text-align:center;
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let favs = JSON.parse(localStorage.getItem("favs")) || [];
 
-let prices = {
-"iPhone 15":4500,
-"Samsung S24":3200,
-"MacBook Pro":8000
-};
-
-/* إضافة */
-function add(name){
-cart.push(name);
-localStorage.setItem("cart",JSON.stringify(cart));
+/* تنقل بين الصفحات */
+function show(page){
+document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+document.getElementById(page).classList.add("active");
 render();
+}
+
+/* إضافة للسلة */
+function add(item){
+cart.push(item);
+localStorage.setItem("cart",JSON.stringify(cart));
 notify("🛒 تمت الإضافة");
+render();
 }
 
 /* مفضلة */
-function fav(name){
-favs.push(name);
+function fav(item){
+favs.push(item);
 localStorage.setItem("favs",JSON.stringify(favs));
 notify("❤️ تمت الإضافة للمفضلة");
 }
 
-/* ذكاء بسيط */
-function suggest(name){
-let msg = "";
-if(name.includes("iPhone")) msg="🔥 مناسب للتصوير والألعاب";
-if(name.includes("Samsung")) msg="⚡ أداء قوي وسعر أقل";
-if(name.includes("MacBook")) msg="💻 أفضل للبرمجة والعمل";
-alert(msg);
-}
-
 /* عرض السلة */
 function render(){
-let box=document.getElementById("cart");
+
+let box=document.getElementById("cartBox");
 box.innerHTML="";
 
 cart.forEach(i=>{
@@ -222,8 +192,18 @@ div.className="item";
 div.innerText=i;
 box.appendChild(div);
 });
+
+/* صفحة السلة */
+let list=document.getElementById("list");
+if(list){
+list.innerHTML="";
+cart.forEach(i=>{
+let li=document.createElement("li");
+li.innerText=i;
+list.appendChild(li);
+});
 }
-render();
+}
 
 /* مسح */
 function clearCart(){
@@ -232,29 +212,7 @@ localStorage.setItem("cart",JSON.stringify(cart));
 render();
 }
 
-/* دفع */
-function openPay(){
-let sum=0;
-cart.forEach(i=>{
-sum+=prices[i]||1000;
-});
-document.getElementById("total").innerText=sum+" ريال";
-document.getElementById("modal").style.display="flex";
-}
-
-function closePay(){
-document.getElementById("modal").style.display="none";
-}
-
-function pay(){
-cart=[];
-localStorage.setItem("cart",JSON.stringify(cart));
-render();
-closePay();
-notify("🎉 تم الدفع بنجاح");
-}
-
-/* إشعارات */
+/* إشعار */
 function notify(msg){
 let n=document.createElement("div");
 n.innerText=msg;
@@ -265,7 +223,6 @@ n.style.background="black";
 n.style.padding="10px";
 n.style.borderRadius="10px";
 document.body.appendChild(n);
-
 setTimeout(()=>n.remove(),2000);
 }
 
@@ -276,6 +233,9 @@ document.querySelectorAll(".card").forEach(c=>{
 c.style.display=c.innerText.toLowerCase().includes(v)?"block":"none";
 });
 });
+
+/* تشغيل */
+render();
 
 </script>
 
