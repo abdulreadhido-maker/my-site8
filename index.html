@@ -3,32 +3,49 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Complete Store</title>
+<title>Super Fun Store</title>
 
 <style>
+:root{
+--bg1:#0b1020;
+--bg2:#111827;
+--card:rgba(255,255,255,0.06);
+--text:white;
+}
+
+body.light{
+--bg1:#f5f7ff;
+--bg2:#ffffff;
+--card:rgba(0,0,0,0.05);
+--text:black;
+}
+
 body{
 margin:0;
 font-family:Arial;
-background:#0e0f12;
-color:white;
+background:linear-gradient(135deg,var(--bg1),var(--bg2));
+color:var(--text);
+transition:0.3s;
 }
 
-/* الهيدر */
+/* هيدر */
 header{
 display:flex;
 justify-content:space-between;
 align-items:center;
 padding:15px;
-background:#111;
+background:rgba(0,0,0,0.3);
+backdrop-filter:blur(10px);
 position:sticky;
 top:0;
+z-index:100;
 }
 
 nav button{
 background:none;
 border:none;
-color:white;
-margin:0 5px;
+color:var(--text);
+margin:0 6px;
 cursor:pointer;
 }
 
@@ -39,59 +56,79 @@ border:none;
 outline:none;
 }
 
-/* الصفحات */
+/* صفحات */
 .page{display:none;padding:20px;}
-.active{display:block;}
+.active{display:block}
 
-/* الهيرو */
+/* هيرو */
 .hero{
 text-align:center;
 padding:60px 20px;
 }
 
-.hero h1{font-size:50px;margin:0}
-.hero p{color:#aaa}
+.hero h1{
+font-size:55px;
+margin:0;
+background:linear-gradient(90deg,#60a5fa,#34d399);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
+}
 
-/* المنتجات */
+/* grid */
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
 gap:15px;
+margin-top:15px;
 }
 
+/* card */
 .card{
-background:#1c1c1e;
+background:var(--card);
 padding:15px;
 border-radius:15px;
 text-align:center;
 transition:0.3s;
+backdrop-filter:blur(10px);
 }
 
-.card:hover{transform:scale(1.03)}
+.card:hover{
+transform:translateY(-5px);
+}
 
+/* صورة */
+.card img{
+width:100%;
+height:150px;
+object-fit:cover;
+border-radius:10px;
+}
+
+/* buttons */
 .btn{
-padding:8px 12px;
+padding:8px 10px;
 margin:5px;
 border:none;
 border-radius:10px;
 cursor:pointer;
 }
 
-.buy{background:white;color:black}
-.fav{background:red;color:white}
-.info{background:#2f7bff;color:white}
+.buy{background:#22c55e;color:white}
+.fav{background:#ef4444;color:white}
+.info{background:#3b82f6;color:white}
 
-/* السلة */
+/* سلة */
 .cartBox{
 position:fixed;
 right:10px;
 bottom:10px;
-background:#111;
+background:rgba(0,0,0,0.6);
 padding:10px;
 border-radius:15px;
-width:240px;
+width:260px;
 max-height:300px;
 overflow:auto;
+backdrop-filter:blur(10px);
 }
 
 .item{
@@ -100,14 +137,22 @@ border-bottom:1px solid #333;
 padding:5px;
 }
 
-/* checkout */
-.checkout{
-background:#1c1c1e;
+/* نافذة المنتج */
+.modal{
+position:fixed;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+background:rgba(0,0,0,0.9);
 padding:20px;
 border-radius:15px;
-max-width:400px;
-margin:auto;
-text-align:center;
+display:none;
+width:300px;
+}
+
+.modal img{
+width:100%;
+border-radius:10px;
 }
 </style>
 </head>
@@ -115,24 +160,24 @@ text-align:center;
 <body>
 
 <header>
-<div>🛍️ Complete Store</div>
+<div>🛍️ Super Store</div>
 
 <nav>
 <button onclick="show('home')">الرئيسية</button>
 <button onclick="show('shop')">المتجر</button>
 <button onclick="show('cart')">السلة (<span id="count">0</span>)</button>
-<button onclick="show('checkout')">الدفع</button>
+<button onclick="toggleTheme()">🌙</button>
 </nav>
 
-<input id="search" placeholder="بحث...">
+<input id="search" placeholder="ابحث...">
 </header>
 
 <!-- HOME -->
 <div id="home" class="page active">
 <div class="hero">
-<h1>🔥 متجر احترافي</h1>
-<p>HTML + CSS + JS في ملف واحد</p>
-<button class="btn buy" onclick="show('shop')">ابدأ التسوق</button>
+<h1>🔥 متجر ممتع جدًا</h1>
+<p>ألوان + صور + تفاعل + تجربة حقيقية</p>
+<button class="btn buy" onclick="show('shop')">ابدأ</button>
 </div>
 </div>
 
@@ -142,26 +187,30 @@ text-align:center;
 <div class="grid">
 
 <div class="card">
+<img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9">
 <h3>iPhone 15</h3>
 <p>4500</p>
 <button class="btn buy" onclick="add('iPhone 15',4500)">شراء</button>
 <button class="btn fav" onclick="fav('iPhone 15')">❤️</button>
-<button class="btn info" onclick="openProduct('iPhone 15',4500)">تفاصيل</button>
+<button class="btn info" onclick="openProduct('iPhone 15','https://images.unsplash.com/photo-1511707171634-5f897ff02aa9',4500)">تفاصيل</button>
 </div>
 
 <div class="card">
+<img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97">
 <h3>Samsung S24</h3>
 <p>3200</p>
 <button class="btn buy" onclick="add('Samsung S24',3200)">شراء</button>
 </div>
 
 <div class="card">
+<img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8">
 <h3>MacBook Pro</h3>
-<p>8000</p>
-<button class="btn buy" onclick="add('MacBook Pro',8000)">شراء</button>
+<p>8500</p>
+<button class="btn buy" onclick="add('MacBook Pro',8500)">شراء</button>
 </div>
 
 <div class="card">
+<img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db">
 <h3>PS5</h3>
 <p>2200</p>
 <button class="btn buy" onclick="add('PS5',2200)">شراء</button>
@@ -174,17 +223,6 @@ text-align:center;
 <div id="cart" class="page">
 <h2>🧺 السلة</h2>
 <ul id="list"></ul>
-<button class="btn buy" onclick="pay()">الدفع</button>
-<button class="btn fav" onclick="clearCart()">مسح</button>
-</div>
-
-<!-- CHECKOUT -->
-<div id="checkout" class="page">
-<div class="checkout">
-<h2>💳 الدفع</h2>
-<p>عدد المنتجات: <span id="total"></span></p>
-<button class="btn buy" onclick="pay()">إتمام الدفع</button>
-</div>
 </div>
 
 <!-- FLOAT CART -->
@@ -193,17 +231,25 @@ text-align:center;
 <div id="cartBox"></div>
 </div>
 
+<!-- PRODUCT MODAL -->
+<div class="modal" id="modal">
+<img id="mimg">
+<h3 id="mname"></h3>
+<p id="mprice"></p>
+<button class="btn buy" onclick="buyFromModal()">شراء</button>
+<button class="btn fav" onclick="closeModal()">إغلاق</button>
+</div>
+
 <script>
 
-/* بيانات */
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let favs = JSON.parse(localStorage.getItem("favs")) || [];
 let current={};
 
 /* صفحات */
-function show(page){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(page).classList.add("active");
+function show(p){
+document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
+document.getElementById(p).classList.add("active");
 render();
 }
 
@@ -219,30 +265,32 @@ render();
 function fav(name){
 favs.push(name);
 localStorage.setItem("favs",JSON.stringify(favs));
-notify("❤️ تمت الإضافة");
+notify("❤️ مفضلة");
 }
 
 /* منتج */
-function openProduct(name,price){
+function openProduct(name,img,price){
 current={name,price};
-show('checkout');
-document.getElementById("total").innerText=price;
+document.getElementById("mimg").src=img;
+document.getElementById("mname").innerText=name;
+document.getElementById("mprice").innerText=price+" ريال";
+document.getElementById("modal").style.display="block";
 }
 
-/* دفع */
-function pay(){
-cart=[];
-localStorage.setItem("cart",JSON.stringify(cart));
-notify("🎉 تم الدفع بنجاح");
-render();
-show('home');
+/* شراء من المودال */
+function buyFromModal(){
+add(current.name,current.price);
+closeModal();
 }
 
-/* مسح */
-function clearCart(){
-cart=[];
-localStorage.setItem("cart",JSON.stringify(cart));
-render();
+/* إغلاق */
+function closeModal(){
+document.getElementById("modal").style.display="none";
+}
+
+/* وضع */
+function toggleTheme(){
+document.body.classList.toggle("light");
 }
 
 /* render */
@@ -250,7 +298,6 @@ function render(){
 
 document.getElementById("count").innerText=cart.length;
 
-/* float cart */
 let box=document.getElementById("cartBox");
 box.innerHTML="";
 cart.forEach(i=>{
@@ -260,7 +307,6 @@ d.innerText=i.name+" - "+i.price;
 box.appendChild(d);
 });
 
-/* cart page */
 let list=document.getElementById("list");
 if(list){
 list.innerHTML="";
@@ -270,10 +316,6 @@ li.innerText=i.name+" - "+i.price;
 list.appendChild(li);
 });
 }
-
-/* total */
-document.getElementById("total").innerText =
-cart.reduce((a,b)=>a+b.price,0);
 }
 
 /* إشعار */
@@ -298,7 +340,6 @@ c.style.display=c.innerText.toLowerCase().includes(v)?"block":"none";
 });
 });
 
-/* تشغيل */
 render();
 
 </script>
