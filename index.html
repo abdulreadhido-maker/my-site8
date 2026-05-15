@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Super Store</title>
+<title>Complete Store</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:#0f0f10;
+background:#0e0f12;
 color:white;
 }
 
@@ -28,20 +28,29 @@ nav button{
 background:none;
 border:none;
 color:white;
-margin:0 8px;
+margin:0 5px;
 cursor:pointer;
-font-size:16px;
 }
 
 input{
 padding:8px;
 border-radius:10px;
 border:none;
+outline:none;
 }
 
 /* الصفحات */
 .page{display:none;padding:20px;}
 .active{display:block;}
+
+/* الهيرو */
+.hero{
+text-align:center;
+padding:60px 20px;
+}
+
+.hero h1{font-size:50px;margin:0}
+.hero p{color:#aaa}
 
 /* المنتجات */
 .grid{
@@ -55,11 +64,14 @@ background:#1c1c1e;
 padding:15px;
 border-radius:15px;
 text-align:center;
+transition:0.3s;
 }
 
-button.action{
+.card:hover{transform:scale(1.03)}
+
+.btn{
+padding:8px 12px;
 margin:5px;
-padding:8px;
 border:none;
 border-radius:10px;
 cursor:pointer;
@@ -67,6 +79,7 @@ cursor:pointer;
 
 .buy{background:white;color:black}
 .fav{background:red;color:white}
+.info{background:#2f7bff;color:white}
 
 /* السلة */
 .cartBox{
@@ -76,15 +89,25 @@ bottom:10px;
 background:#111;
 padding:10px;
 border-radius:15px;
-width:220px;
+width:240px;
 max-height:300px;
 overflow:auto;
 }
 
 .item{
 font-size:13px;
-padding:5px;
 border-bottom:1px solid #333;
+padding:5px;
+}
+
+/* checkout */
+.checkout{
+background:#1c1c1e;
+padding:20px;
+border-radius:15px;
+max-width:400px;
+margin:auto;
+text-align:center;
 }
 </style>
 </head>
@@ -92,12 +115,13 @@ border-bottom:1px solid #333;
 <body>
 
 <header>
-<div>🛍️ Super Store</div>
+<div>🛍️ Complete Store</div>
 
 <nav>
 <button onclick="show('home')">الرئيسية</button>
 <button onclick="show('shop')">المتجر</button>
-<button onclick="show('cart')">السلة</button>
+<button onclick="show('cart')">السلة (<span id="count">0</span>)</button>
+<button onclick="show('checkout')">الدفع</button>
 </nav>
 
 <input id="search" placeholder="بحث...">
@@ -105,36 +129,42 @@ border-bottom:1px solid #333;
 
 <!-- HOME -->
 <div id="home" class="page active">
-<h1>متجر احترافي 🚀</h1>
-<p>أفضل تجربة تسوق داخل ملف واحد</p>
+<div class="hero">
+<h1>🔥 متجر احترافي</h1>
+<p>HTML + CSS + JS في ملف واحد</p>
+<button class="btn buy" onclick="show('shop')">ابدأ التسوق</button>
+</div>
 </div>
 
 <!-- SHOP -->
 <div id="shop" class="page">
 
-<h2>🛒 المنتجات</h2>
-
 <div class="grid">
 
 <div class="card">
 <h3>iPhone 15</h3>
-<p>4500 ريال</p>
-<button class="action buy" onclick="add('iPhone 15')">شراء</button>
-<button class="action fav" onclick="fav('iPhone 15')">❤️</button>
+<p>4500</p>
+<button class="btn buy" onclick="add('iPhone 15',4500)">شراء</button>
+<button class="btn fav" onclick="fav('iPhone 15')">❤️</button>
+<button class="btn info" onclick="openProduct('iPhone 15',4500)">تفاصيل</button>
 </div>
 
 <div class="card">
 <h3>Samsung S24</h3>
-<p>3200 ريال</p>
-<button class="action buy" onclick="add('Samsung S24')">شراء</button>
-<button class="action fav" onclick="fav('Samsung S24')">❤️</button>
+<p>3200</p>
+<button class="btn buy" onclick="add('Samsung S24',3200)">شراء</button>
 </div>
 
 <div class="card">
 <h3>MacBook Pro</h3>
-<p>8000 ريال</p>
-<button class="action buy" onclick="add('MacBook Pro')">شراء</button>
-<button class="action fav" onclick="fav('MacBook Pro')">❤️</button>
+<p>8000</p>
+<button class="btn buy" onclick="add('MacBook Pro',8000)">شراء</button>
+</div>
+
+<div class="card">
+<h3>PS5</h3>
+<p>2200</p>
+<button class="btn buy" onclick="add('PS5',2200)">شراء</button>
 </div>
 
 </div>
@@ -144,65 +174,68 @@ border-bottom:1px solid #333;
 <div id="cart" class="page">
 <h2>🧺 السلة</h2>
 <ul id="list"></ul>
-<button onclick="clearCart()">مسح السلة</button>
+<button class="btn buy" onclick="pay()">الدفع</button>
+<button class="btn fav" onclick="clearCart()">مسح</button>
 </div>
 
-<!-- CART BOX -->
+<!-- CHECKOUT -->
+<div id="checkout" class="page">
+<div class="checkout">
+<h2>💳 الدفع</h2>
+<p>عدد المنتجات: <span id="total"></span></p>
+<button class="btn buy" onclick="pay()">إتمام الدفع</button>
+</div>
+</div>
+
+<!-- FLOAT CART -->
 <div class="cartBox">
-<h4>السلة السريعة</h4>
+<h4>السلة</h4>
 <div id="cartBox"></div>
 </div>
 
 <script>
 
+/* بيانات */
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 let favs = JSON.parse(localStorage.getItem("favs")) || [];
+let current={};
 
-/* تنقل بين الصفحات */
+/* صفحات */
 function show(page){
 document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
 document.getElementById(page).classList.add("active");
 render();
 }
 
-/* إضافة للسلة */
-function add(item){
-cart.push(item);
+/* إضافة */
+function add(name,price){
+cart.push({name,price});
 localStorage.setItem("cart",JSON.stringify(cart));
 notify("🛒 تمت الإضافة");
 render();
 }
 
 /* مفضلة */
-function fav(item){
-favs.push(item);
+function fav(name){
+favs.push(name);
 localStorage.setItem("favs",JSON.stringify(favs));
-notify("❤️ تمت الإضافة للمفضلة");
+notify("❤️ تمت الإضافة");
 }
 
-/* عرض السلة */
-function render(){
-
-let box=document.getElementById("cartBox");
-box.innerHTML="";
-
-cart.forEach(i=>{
-let div=document.createElement("div");
-div.className="item";
-div.innerText=i;
-box.appendChild(div);
-});
-
-/* صفحة السلة */
-let list=document.getElementById("list");
-if(list){
-list.innerHTML="";
-cart.forEach(i=>{
-let li=document.createElement("li");
-li.innerText=i;
-list.appendChild(li);
-});
+/* منتج */
+function openProduct(name,price){
+current={name,price};
+show('checkout');
+document.getElementById("total").innerText=price;
 }
+
+/* دفع */
+function pay(){
+cart=[];
+localStorage.setItem("cart",JSON.stringify(cart));
+notify("🎉 تم الدفع بنجاح");
+render();
+show('home');
 }
 
 /* مسح */
@@ -210,6 +243,37 @@ function clearCart(){
 cart=[];
 localStorage.setItem("cart",JSON.stringify(cart));
 render();
+}
+
+/* render */
+function render(){
+
+document.getElementById("count").innerText=cart.length;
+
+/* float cart */
+let box=document.getElementById("cartBox");
+box.innerHTML="";
+cart.forEach(i=>{
+let d=document.createElement("div");
+d.className="item";
+d.innerText=i.name+" - "+i.price;
+box.appendChild(d);
+});
+
+/* cart page */
+let list=document.getElementById("list");
+if(list){
+list.innerHTML="";
+cart.forEach(i=>{
+let li=document.createElement("li");
+li.innerText=i.name+" - "+i.price;
+list.appendChild(li);
+});
+}
+
+/* total */
+document.getElementById("total").innerText =
+cart.reduce((a,b)=>a+b.price,0);
 }
 
 /* إشعار */
