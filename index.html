@@ -1,11 +1,11 @@
-<!DOCTYPE html>
 <html lang="ar">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Amazon Style Store</title>
+<title>Mega Store</title>
 
 <style>
+
 body{
 margin:0;
 font-family:Arial;
@@ -13,306 +13,519 @@ background:#0f172a;
 color:white;
 }
 
-/* header */
+/* HEADER */
+
 header{
+position:sticky;
+top:0;
+z-index:1000;
 display:flex;
 justify-content:space-between;
 align-items:center;
-padding:15px;
+padding:15px 25px;
 background:#111827;
-position:sticky;
-top:0;
-z-index:100;
+box-shadow:0 5px 20px rgba(0,0,0,0.4);
+}
+
+.logo{
+font-size:24px;
+font-weight:bold;
+color:#60a5fa;
 }
 
 nav button{
 background:none;
 border:none;
 color:white;
-margin:0 5px;
+margin:0 8px;
 cursor:pointer;
+font-size:15px;
+transition:0.3s;
 }
 
-input{
-padding:8px;
-border-radius:10px;
+nav button:hover{
+color:#60a5fa;
+}
+
+.search{
+padding:10px;
 border:none;
+border-radius:12px;
 outline:none;
+width:220px;
 }
 
-/* pages */
-.page{display:none;padding:20px;}
-.active{display:block}
+/* HERO */
 
-/* login */
-.login{
-max-width:300px;
-margin:100px auto;
-background:#1c1c1e;
-padding:20px;
-border-radius:15px;
-text-align:center;
-}
-
-/* hero */
 .hero{
 text-align:center;
-padding:60px;
+padding:80px 20px;
+background:linear-gradient(135deg,#1e293b,#0f172a);
 }
 
 .hero h1{
-font-size:50px;
+font-size:60px;
+margin:0;
 background:linear-gradient(90deg,#60a5fa,#34d399);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
 
-/* grid */
+.hero p{
+color:#cbd5e1;
+font-size:18px;
+}
+
+/* SECTION */
+
+.section{
+padding:20px;
+}
+
+.section h2{
+margin-bottom:20px;
+color:#93c5fd;
+}
+
+/* GRID */
+
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:15px;
+gap:20px;
 }
 
-/* card */
+/* CARD */
+
 .card{
-background:#1c1c1e;
-padding:15px;
-border-radius:15px;
-text-align:center;
+background:#1e293b;
+border-radius:18px;
+overflow:hidden;
 transition:0.3s;
+box-shadow:0 5px 20px rgba(0,0,0,0.3);
 }
 
-.card:hover{transform:scale(1.03)}
+.card:hover{
+transform:translateY(-8px);
+}
 
 .card img{
 width:100%;
-height:140px;
+height:180px;
 object-fit:cover;
-border-radius:10px;
 }
 
-/* buttons */
+.card-content{
+padding:15px;
+}
+
+.card h3{
+margin:0;
+}
+
+.price{
+color:#34d399;
+margin:10px 0;
+font-size:18px;
+}
+
+/* BUTTONS */
+
 .btn{
-padding:8px;
+padding:10px;
 border:none;
 border-radius:10px;
 cursor:pointer;
-margin:5px;
+margin:5px 0;
+width:100%;
+font-weight:bold;
 }
 
-.buy{background:#22c55e;color:white}
-.fav{background:#ef4444;color:white}
-.info{background:#3b82f6;color:white}
+.buy{
+background:#22c55e;
+color:white;
+}
 
-/* cart */
-.cartBox{
+.info{
+background:#3b82f6;
+color:white;
+}
+
+.fav{
+background:#ef4444;
+color:white;
+}
+
+/* CART */
+
+.cart-box{
+position:fixed;
+right:15px;
+bottom:15px;
 background:#111827;
-padding:10px;
-border-radius:10px;
-margin-top:10px;
+padding:15px;
+border-radius:15px;
+width:280px;
+max-height:350px;
+overflow:auto;
+box-shadow:0 5px 20px rgba(0,0,0,0.4);
 }
 
-/* modal */
+.cart-box h3{
+margin-top:0;
+}
+
+.cart-item{
+padding:8px;
+border-bottom:1px solid #333;
+font-size:14px;
+}
+
+/* MODAL */
+
 .modal{
 position:fixed;
 top:50%;
 left:50%;
 transform:translate(-50%,-50%);
-background:#1c1c1e;
+background:#1e293b;
 padding:20px;
-border-radius:15px;
+border-radius:20px;
 display:none;
-width:300px;
+width:320px;
+z-index:9999;
+box-shadow:0 10px 30px rgba(0,0,0,0.5);
 }
 
 .modal img{
 width:100%;
-border-radius:10px;
+border-radius:12px;
+margin-bottom:10px;
 }
+
+.close{
+background:#ef4444;
+}
+
+/* FOOTER */
+
+footer{
+text-align:center;
+padding:30px;
+margin-top:40px;
+background:#111827;
+color:#94a3b8;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div id="login" class="page active">
-<div class="login">
-<h2>🔐 تسجيل دخول</h2>
-<input id="user" placeholder="اسمك">
-<br><br>
-<button class="btn buy" onclick="login()">دخول</button>
-</div>
-</div>
-
-<!-- STORE -->
-<div id="store" class="page">
-
 <header>
-<div>🛍️ Amazon Style</div>
+
+<div class="logo">🛍️ Mega Store</div>
 
 <nav>
-<button onclick="show('home')">الرئيسية</button>
-<button onclick="show('shop')">المتجر</button>
-<button onclick="show('cart')">السلة (<span id="count">0</span>)</button>
-<button onclick="show('admin')">لوحة</button>
+<button>الرئيسية</button>
+<button>الإلكترونيات</button>
+<button>الألعاب</button>
+<button>الجوالات</button>
+<button>العروض</button>
 </nav>
 
-<input id="search" placeholder="بحث...">
+<input class="search" id="search" placeholder="ابحث عن منتج...">
+
 </header>
 
-<!-- HOME -->
-<div id="home" class="page active">
-<div class="hero">
-<h1>🔥 متجر عالمي</h1>
-<p>نسخة قوية داخل HTML فقط</p>
-<button class="btn buy" onclick="show('shop')">ابدأ</button>
-</div>
-</div>
+<!-- HERO -->
 
-<!-- SHOP -->
-<div id="shop" class="page">
+<section class="hero">
 
-<div class="grid">
+<h1>🔥 أكبر متجر ممتع</h1>
+
+<p>
+منتجات كثيرة + تصميم احترافي + تجربة ممتعة
+</p>
+
+</section>
+
+<!-- PRODUCTS -->
+
+<section class="section">
+
+<h2>⭐ المنتجات المشهورة</h2>
+
+<div class="grid" id="products">
+
+<!-- PRODUCT -->
 
 <div class="card">
 <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9">
-<h3>iPhone 15</h3>
-<p>4500</p>
-<button class="btn buy" onclick="add('iPhone 15',4500)">شراء</button>
-<button class="btn fav" onclick="fav('iPhone 15')">❤️</button>
-<button class="btn info" onclick="openP('iPhone 15',4500,'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9')">تفاصيل</button>
+<div class="card-content">
+<h3>iPhone 15 Pro</h3>
+<div class="price">4500 ريال</div>
+
+<button class="btn buy" onclick="add('iPhone 15 Pro',4500)">شراء</button>
+
+<button class="btn info"
+onclick="openP('iPhone 15 Pro',4500,'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9')">
+تفاصيل
+</button>
+
+<button class="btn fav">❤️ مفضلة</button>
+</div>
 </div>
 
-<div class="card">
-<img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97">
-<h3>Samsung S24</h3>
-<p>3200</p>
-<button class="btn buy" onclick="add('Samsung S24',3200)">شراء</button>
-</div>
+<!-- PRODUCT -->
 
 <div class="card">
 <img src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8">
-<h3>MacBook</h3>
-<p>8500</p>
-<button class="btn buy" onclick="add('MacBook',8500)">شراء</button>
+<div class="card-content">
+<h3>MacBook Pro</h3>
+<div class="price">8500 ريال</div>
+
+<button class="btn buy" onclick="add('MacBook Pro',8500)">شراء</button>
+
+<button class="btn info"
+onclick="openP('MacBook Pro',8500,'https://images.unsplash.com/photo-1517336714731-489689fd1ca8')">
+تفاصيل
+</button>
+
+<button class="btn fav">❤️ مفضلة</button>
+</div>
+</div>
+
+<!-- PRODUCT -->
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1606813907291-d86efa9b94db">
+<div class="card-content">
+<h3>PlayStation 5</h3>
+<div class="price">2200 ريال</div>
+
+<button class="btn buy" onclick="add('PS5',2200)">شراء</button>
+
+<button class="btn info"
+onclick="openP('PS5',2200,'https://images.unsplash.com/photo-1606813907291-d86efa9b94db')">
+تفاصيل
+</button>
+
+<button class="btn fav">❤️ مفضلة</button>
+</div>
+</div>
+
+<!-- PRODUCT -->
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1587202372775-e229f172b9d7">
+<div class="card-content">
+<h3>Gaming Laptop</h3>
+<div class="price">6300 ريال</div>
+
+<button class="btn buy" onclick="add('Gaming Laptop',6300)">شراء</button>
+
+<button class="btn info"
+onclick="openP('Gaming Laptop',6300,'https://images.unsplash.com/photo-1587202372775-e229f172b9d7')">
+تفاصيل
+</button>
+
+<button class="btn fav">❤️ مفضلة</button>
+</div>
+</div>
+
+<!-- PRODUCT -->
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1598327105666-5b89351aff97">
+<div class="card-content">
+<h3>Samsung S24 Ultra</h3>
+<div class="price">3900 ريال</div>
+
+<button class="btn buy" onclick="add('Samsung S24 Ultra',3900)">شراء</button>
+
+<button class="btn info"
+onclick="openP('Samsung S24 Ultra',3900,'https://images.unsplash.com/photo-1598327105666-5b89351aff97')">
+تفاصيل
+</button>
+
+<button class="btn fav">❤️ مفضلة</button>
+</div>
+</div>
+
+<!-- PRODUCT -->
+
+<div class="card">
+<img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff">
+<div class="card-content">
+<h3>Nike Shoes</h3>
+<div class="price">700 ريال</div>
+
+<button class="btn buy" onclick="add('Nike Shoes',700)">شراء</button>
+
+<button class="btn info"
+onclick="openP('Nike Shoes',700,'https://images.unsplash.com/photo-1542291026-7eec264c27ff')">
+تفاصيل
+</button>
+
+<button class="btn fav">❤️ مفضلة</button>
+</div>
 </div>
 
 </div>
-</div>
+
+</section>
 
 <!-- CART -->
-<div id="cart" class="page">
-<h2>🧺 السلة</h2>
-<div id="list"></div>
-<h3>الإجمالي: <span id="total"></span></h3>
-<button class="btn buy" onclick="pay()">دفع</button>
-</div>
 
-<!-- ADMIN -->
-<div id="admin" class="page">
-<h2>📊 لوحة التحكم</h2>
-<p>عدد المنتجات في السلة: <span id="adminCount"></span></p>
+<div class="cart-box">
+
+<h3>
+🛒 السلة (<span id="count">0</span>)
+</h3>
+
+<div id="cartItems"></div>
+
+<h4>
+الإجمالي:
+<span id="total">0</span>
+ريال
+</h4>
+
+<button class="btn buy" onclick="pay()">
+إتمام الدفع
+</button>
+
 </div>
 
 <!-- MODAL -->
+
 <div class="modal" id="modal">
-<img id="img">
-<h3 id="name"></h3>
-<p id="price"></p>
-<button class="btn buy" onclick="addModal()">إضافة</button>
-<button class="btn fav" onclick="closeM()">إغلاق</button>
+
+<img id="mimg">
+
+<h2 id="mname"></h2>
+
+<p id="mprice"></p>
+
+<button class="btn buy" onclick="addModal()">
+إضافة للسلة
+</button>
+
+<button class="btn close" onclick="closeP()">
+إغلاق
+</button>
+
 </div>
+
+<footer>
+
+© 2026 Mega Store
+
+</footer>
 
 <script>
 
-let cart=[];
-let favs=[];
-let current={};
-let user="";
+let cart = [];
+let current = {};
 
-/* login */
-function login(){
-user=document.getElementById("user").value;
-if(!user) return alert("اكتب اسمك");
-document.getElementById("login").classList.remove("active");
-document.getElementById("store").classList.add("active");
-}
+/* إضافة للسلة */
 
-/* show pages */
-function show(p){
-document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));
-document.getElementById(p).classList.add("active");
+function add(name,price){
+
+cart.push({name,price});
+
 render();
-}
 
-/* add */
-function add(n,p){
-cart.push({n,p});
-render();
-}
-
-/* fav */
-function fav(n){
-favs.push(n);
-}
-
-/* modal */
-function openP(n,p,img){
-current={n,p};
-document.getElementById("img").src=img;
-document.getElementById("name").innerText=n;
-document.getElementById("price").innerText=p;
-document.getElementById("modal").style.display="block";
-}
-
-function closeM(){
-document.getElementById("modal").style.display="none";
-}
-
-function addModal(){
-add(current.n,current.p);
-closeM();
 }
 
 /* render */
+
 function render(){
 
-document.getElementById("count").innerText=cart.length;
+document.getElementById("count").innerText = cart.length;
 
-let list=document.getElementById("list");
-if(list){
-list.innerHTML="";
+let items = document.getElementById("cartItems");
+
+items.innerHTML = "";
+
+let total = 0;
+
 cart.forEach(i=>{
-let d=document.createElement("div");
-d.innerText=i.n+" - "+i.p;
-list.appendChild(d);
+
+total += i.price;
+
+let div = document.createElement("div");
+
+div.className="cart-item";
+
+div.innerText = i.name + " - " + i.price + " ريال";
+
+items.appendChild(div);
+
 });
+
+document.getElementById("total").innerText = total;
+
 }
 
-let total=cart.reduce((a,b)=>a+b.p,0);
-document.getElementById("total").innerText=total;
+/* دفع */
 
-let admin=document.getElementById("adminCount");
-if(admin) admin.innerText=cart.length;
-}
-
-/* pay */
 function pay(){
-alert("تم الدفع: "+cart.reduce((a,b)=>a+b.p,0));
+
+alert("🎉 تم الدفع بنجاح");
+
 cart=[];
+
 render();
+
 }
 
-/* search */
+/* modal */
+
+function openP(name,price,img){
+
+current={name,price};
+
+document.getElementById("mname").innerText=name;
+
+document.getElementById("mprice").innerText=price+" ريال";
+
+document.getElementById("mimg").src=img;
+
+document.getElementById("modal").style.display="block";
+
+}
+
+function closeP(){
+
+document.getElementById("modal").style.display="none";
+
+}
+
+function addModal(){
+
+add(current.name,current.price);
+
+closeP();
+
+}
+
+/* بحث */
+
 document.getElementById("search").addEventListener("input",e=>{
+
 let v=e.target.value.toLowerCase();
+
 document.querySelectorAll(".card").forEach(c=>{
-c.style.display=c.innerText.toLowerCase().includes(v)?"block":"none";
-});
+
+c.style.display = c.innerText.toLowerCase().includes(v)
+? "block"
+: "none";
+
 });
 
-render();
+});
 
 </script>
 
